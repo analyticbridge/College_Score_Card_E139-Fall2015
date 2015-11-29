@@ -27,6 +27,9 @@ names(edu2013)[1]<-"UNITID"
 
 ## unfortunately, 2011 is latest file with earnings data (md_earn_wne_p6)
 ## will need to take that data and add it to 2013
+#f=file.choose()
+#irondata=read.csv(f)
+#attach(irondata)
 edu2011<-read.csv(file = "MERGED2011_PP.csv" , na.strings = "NULL")
 names(edu2011)[1]<-"UNITID"
 edu2011<-dplyr::select(edu2011, UNITID_2011=UNITID, EARN_2011=md_earn_wne_p6)
