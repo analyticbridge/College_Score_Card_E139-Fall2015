@@ -1,8 +1,7 @@
-## Testing template for project 
+## Best Education value by earning and tution cost ,Completion rate.
 ##
 ## 11/28/2015
-## Best Bests in Education
-## Creates three graphs (tuition, completion rate, and earnings) and
+#### Creates three graphs (tuition, completion rate, and earnings) and
 ## a table of schools in lowest 25% of tuition and highest 25%
 ## of completion and earnings and draws them in a 2x2 layout to png.
 
@@ -20,17 +19,11 @@ require(gtable)
 ## make sure variables are correct data type
 
 ## read  lateset data which is 2013 and merged with 2011 earning data .
-edu2013<-read.csv(file = "file2013" , na.strings = "NULL")
-## ISSUE:I am having an issue with the first column name not reading in correctly
-## compensate by renaminig the col (not optimal but I need a work around).
+edu2013<-read.csv(file = "C:\\@goole-drive-backup\\S139_project_data\\CollegeScorecard_Raw_Data\\MERGED2013_PP.csv" , na.strings = "NULL")
 names(edu2013)[1]<-"UNITID"
-
-## unfortunately, 2011 is latest file with earnings data (md_earn_wne_p6)
-## will need to take that data and add it to 2013
-#f=file.choose()
-#irondata=read.csv(f)
-#attach(irondata)
-edu2011<-read.csv(file = "MERGED2011_PP.csv" , na.strings = "NULL")
+## Lateset file 2013  is missing earning data ,so merging with 
+#in from year 2011 file
+edu2011<-read.csv(file = "C:\\@goole-drive-backup\\S139_project_data\\CollegeScorecard_Raw_Data\\MERGED2011_PP.csv" , na.strings = "NULL")
 names(edu2011)[1]<-"UNITID"
 edu2011<-dplyr::select(edu2011, UNITID_2011=UNITID, EARN_2011=md_earn_wne_p6)
 edu<-merge(x=edu2013, y=edu2011, by.x="UNITID", by.y="UNITID_2011", 
@@ -43,15 +36,14 @@ edu<-dplyr::select(edu,
                    TUITIONFEE_IN,  ## In-state tuition and fees
                    C150_4,         ## Completion rate*
                    EARN_2011)      ## Median earnings** 
-
+write.csv(edu,file="C:\\@goole-drive-backup\\S139_project_data\\CollegeScorecard_Raw_Data\\edu01.csv")
 ## Notes:
 ## *Completion rate based on 1st-time, full-time students completing in 6 years 
 ##      (150% of expected time) at 4-year institutions
 ## **Median earnings based on students working and not enrolled 6 years after entry
-
+# use median to avoid outliers
 edu<-filter(edu, 
-            PREDDEG==3 &                        ## Predominate degree is bachelor's
-              CURROPER==1 &                       ## Currently operating
+            PREDDEG==3 &                        ## Predominate degree is CURROPER==1 &                       ## Currently operating
               is.na(TUITIONFEE_IN) == FALSE &     ## Key measurements aren't missing
               is.na(C150_4) == FALSE &
               is.na(EARN_2011) == FALSE &
@@ -82,7 +74,7 @@ g_cost <- g_cost + theme(axis.text.x = element_text(size=20, vjust=2))
 g_cost <- g_cost + theme(axis.ticks=element_blank(), ## hide y tick marks
                          axis.text.y=element_blank()) 
 g_cost <- g_cost + annotation_custom(grob_cost)
-##g_cost
+g_cost
 
 ################### Graph Earnings ###################
 
@@ -107,7 +99,7 @@ g_earn <- g_earn + theme(axis.text.x = element_text(size=20, vjust=2))
 g_earn <- g_earn + theme(axis.ticks=element_blank(), 
                          axis.text.y=element_blank()) ## hide y tick marks
 g_earn <- g_earn + annotation_custom(grob_earn)
-##g_earn
+g_earn
 
 ################### Graph Completion Rate ###################
 
@@ -132,7 +124,7 @@ g_rate <- g_rate + theme(axis.text.x = element_text(size=20, vjust=2))
 g_rate <- g_rate + theme(axis.ticks=element_blank(), 
                          axis.text.y=element_blank()) ## hide y tick marks
 g_rate <- g_rate + annotation_custom(grob_rate)
-##g_rate
+g_rate
 
 ################### Find Schools ###################
 
@@ -178,8 +170,8 @@ t_schools <- gtable_add_rows(t_schools,
 t_schools <- gtable_add_grob(t_schools, grob_schools, t=1, l=1, r=ncol(t_schools))
 ## code below will make sure table is centered and top justified
 t_schools$vp<-viewport(x=.5, y=unit(1,"npc")-.5*sum(t_schools$heights))
-##grid.newpage()
-##grid.draw(t_schools)
+grid.newpage()
+grid.draw(t_schools)
 
 ################### Layout ###################
 
@@ -193,8 +185,7 @@ bottom <- paste("College Scorecard Data (collegescorecard.ed.gov/data) ",
 bottom_grob = textGrob(bottom, gp=gpar(fontsize=20))
 
 ## set graphics device
-png("Education3.png", width=1200, height=1200, units="px")
-
+png("C:\\@goole-drive-backup\\S139_project_data\\CollegeScorecard_Raw_Data\\Top_school.png",width=1200, height=1200, units="px")
 grid.arrange(g_cost, g_rate, g_earn, t_schools, nrow=2, ncol=2, 
              top = top_grob, bottom = bottom_grob)
 
